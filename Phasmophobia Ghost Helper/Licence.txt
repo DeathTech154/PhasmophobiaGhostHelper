@@ -1,0 +1,32 @@
+#Phasmophobia Ghost helper tool.
+
+Made by (DeathTech) - www.twitch.tv/deathtech154 - @deathtech154 - www.youtube.com/user/deathtechdb
+All rights reserved.
+
+Please do not copy any of the code for your own usage in part or full.
+Please do not make any derrived software for public release.
+
+You are welcome to tweak parts of the software but not if you are going to display that publicly
+as I do not want people thinking the tool is buggy because you can't program.
+
+If you have any edits you want to add officially:
+Please go to the github (https://github.com/DeathTech154/PhasmophobiaGhostHelper/) and post a fork or suggest an edit and I will make sure it is sound..
+
+Do not edit the software to remove the watermark at the top.
+Do not redistribute unless express permission is given.
+
+You are welcome to use this software royalty free in youtube videos, streaming,...
+Although if you are going to display this software publically. Again do not remove the watermark.
+If you are a creator it is a term of service that you display the software including watermark on your video/stream.
+
+If you do wish to use the software and would like the watermark removed.
+Please contact me via the above mentioned user accounts for twitter, twitch or youtube respectively.
+
+The reason for the watermark is to give me something in return for the software released freely to all.
+Sadly I have to make something out of it so this is done with a watermark for creators.
+
+This list is not exhaustive again all rights reserved.
+Software is provided as is with no guarantee it will function properly and no warranties.
+Use this software at your own risk.
+
+If it does not work as intended post an issue on github.
