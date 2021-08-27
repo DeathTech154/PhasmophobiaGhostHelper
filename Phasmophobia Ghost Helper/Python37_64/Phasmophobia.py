@@ -27,7 +27,7 @@ from urllib.request import urlopen
 
 ## This list is not exhaustive again all rights reserved.
 
-ToolVersion = "v1.1.1.6"
+ToolVersion = "v1.1.1.7"
 
 def GetLatestVersion():
     url = "https://github.com/DeathTech154/PhasmophobiaGhostHelper/wiki/Version---Changelog"
