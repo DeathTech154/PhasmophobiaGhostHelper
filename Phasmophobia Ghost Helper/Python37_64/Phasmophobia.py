@@ -27,7 +27,7 @@ from urllib.request import urlopen
 
 ## This list is not exhaustive again all rights reserved.
 
-ToolVersion = "v1.0.0.0"
+ToolVersion = "v1.1.1.5"
 
 def GetLatestVersion():
     url = "https://github.com/DeathTech154/PhasmophobiaGhostHelper/wiki/Version---Changelog"
@@ -56,28 +56,35 @@ evidences = []
 excludes = []
 ghosts = []
 ghostsGUI = []
-ghosts.append(Ghost("Banshee",["Freezing","EMF","Fingerprints"]))
-ghosts.append(Ghost("Demon",["Freezing","Box","Writing"]))
-ghosts.append(Ghost("Hantu",["Orbs","Writing","Fingerprints"]))
-ghosts.append(Ghost("Jinn",["EMF","Orbs","Box"]))
-ghosts.append(Ghost("Mare",["Freezing","Orbs","Box"]))
-ghosts.append(Ghost("Oni",["EMF","Box","Writing"]))
-ghosts.append(Ghost("Phantom",["Freezing","EMF","Orbs"]))
-ghosts.append(Ghost("Poltergeist",["Orbs","Box","Fingerprints"]))
-ghosts.append(Ghost("Revenant",["EMF","Writing","Fingerprints"]))
-ghosts.append(Ghost("Shade",["EMF","Orbs","Writing"]))
-ghosts.append(Ghost("Spirit",["Box","Writing","Fingerprints"]))
-ghosts.append(Ghost("Wraith",["Freezing","Box","Fingerprints"]))
-ghosts.append(Ghost("Yokai",["Orbs","Box","Writing"]))
-ghosts.append(Ghost("Yurei",["Freezing","Orbs","Writing"]))
+ghosts.append(Ghost("Banshee",["Fingerprints","Orbs","DOTS"]))
+ghosts.append(Ghost("Demon",["Fingerprints","Writing","Freezing"]))
+ghosts.append(Ghost("Hantu",["Fingerprints","Orbs","Freezing"]))
+ghosts.append(Ghost("Jinn",["EMF","Fingerprints","Freezing"]))
+ghosts.append(Ghost("Mare",["Box","Orbs","Writing"]))
+ghosts.append(Ghost("Oni",["EMF","Freezing","DOTS"]))
+ghosts.append(Ghost("Phantom",["Box","Fingerprints","DOTS"]))
+ghosts.append(Ghost("Poltergeist",["Box","Fingerprints","Writing"]))
+ghosts.append(Ghost("Revenant",["Orbs","Writing","Freezing"]))
+ghosts.append(Ghost("Shade",["EMF","Writing","Freezing"]))
+ghosts.append(Ghost("Spirit",["EMF","Box","Writing"]))
+ghosts.append(Ghost("Wraith",["EMF","Box","DOTS"]))
+ghosts.append(Ghost("Yokai",["Box","Orbs","DOTS"]))
+ghosts.append(Ghost("Yurei",["Orbs","Freezing","DOTS"]))
+ghosts.append(Ghost("Goryo",["EMF","Fingerprints","DOTS"]))
+ghosts.append(Ghost("Myling",["EMF","Fingerprints","Writing"]))
 
 #Statistics (100 / max ghosts * evidences) = Percentage remaining
-# Freezing     6 / 14, 42.85% -> Focus
-# EMF          6 / 14, 42.85% -> Focus
-# Orbs         8 / 14, 57.14% -> Set and monitor
-# Box          8 / 14, 57.14% -> Secondary
-# Writing      8 / 14, 57.14% -> Set and forget
-# Fingerprints 6 / 14, 42.85% -> Focus
+# Freezing     7 / 16, 43.75% -> Focus - Highly Reliable
+# EMF          7 / 16, 43.75% -> Unreliable - Don't Bother? XD
+# Orbs         6 / 16, 50.00% -> Set and monitor
+# Box          6 / 16, 37.50% -> Focus - Highly Reliable
+# Writing      7 / 16, 43.75% -> Set and forget - Unreliable
+# Fingerprints 8 / 16, 50.00% -> Focus - Highly Reliable
+# DOTS         7 / 16, 43.75% -> Reliable granted small room.
+
+# EMF can exclude Orbs and vice versa
+# BOX can exclude Freezing
+# BOOK can exclude D.O.T.S
 
 def mainloop():
     print("Welcome to the main menu.")
@@ -171,6 +178,7 @@ class Evidence():
     def Toggle(self):
         if self.State == 0: # State nothing so far. Move to evidence
             self.buttonF.configure(bg="green")
+            self.buttonF.configure(fg="black")
             self.State = self.State + 1
         elif self.State == 1: # Move from evidence to suspected.
             self.buttonF.configure(bg="yellow")
@@ -183,6 +191,10 @@ class Evidence():
         elif self.State == 3: # Exclude this evidence. I suspect it's not true.
             self.buttonF.configure(bg="black")
             self.State = 0
+    def Exclude(self):
+        self.buttonF.configure(bg="lightgrey")
+        self.buttonF.configure(fg="black")
+            
 
 class GC():
     def __init__(self,wrd):
@@ -218,19 +230,49 @@ def Num2Str(num):
 class MainLoopGUI():
     def __init__(self):
         self.ghosts = ghostsGUI
-        self.evidences = ["Freezing","EMF","Orbs","Box","Writing", "Fingerprints"]
+        self.evidences = ["Freezing","EMF","Orbs","Box","Writing","Fingerprints","D.O.T.S"]
         self.EVIDENCELIST = []
     def ResolveGhosts(self):
         requiredevidencecount = 0
         requiredsusevidencecount = 0
         bannedevidence = 0
+        BLOCKED = []
         for evi in self.EVIDENCELIST:
             if evi.State == 1:
                 requiredevidencecount = requiredevidencecount + 1
+                if evi.Name == "EMF":
+                    # MAKE ORBS GRAY
+                    if BLOCKED.count(evi.Name) < 1:
+                        BLOCKED.append("Orbs")
+                elif evi.Name == "Orbs":
+                    # MAKE EMF GRAY
+                    if BLOCKED.count(evi.Name) < 1:
+                        BLOCKED.append("EMF")
+                elif evi.Name == "Box":
+                    # MAKE FREEZING GRAY
+                    if BLOCKED.count(evi.Name) < 1:
+                        BLOCKED.append("Freezing")
+                elif evi.Name == "Freezing":
+                    # MAKE BOX GRAY
+                    if BLOCKED.count(evi.Name) < 1:
+                        BLOCKED.append("Box")
+                elif evi.Name == "Writing":
+                    # MAKE D.O.T.S GRAY
+                    if BLOCKED.count(evi.Name) < 1:
+                        BLOCKED.append("D.O.T.S")
+                elif evi.Name == "D.O.T.S":
+                    # MAKE BOOK GRAY
+                    if BLOCKED.count(evi.Name) < 1:
+                        BLOCKED.append("Writing")
             elif evi.State == 2:
                 requiredsusevidencecount = requiredsusevidencecount + 1
             elif evi.State == 3:
                 bannedevidence = bannedevidence + 1
+        # GO THROUGH EVIDENCE
+        # CONFIRM IF CONTRADICTIONS ARE IN PLAY
+        # CONFIRM WHICH CONTRADICTIONS
+        # RUN THROUGH AND GREY CONTRADICTIONS
+        # RUN THROUGH AND GREY GHOST AFFECTED
         for ghost in self.ghosts:
             confirmed = 0
             suspected = 0
@@ -244,6 +286,11 @@ class MainLoopGUI():
                             suspected = suspected + 1
                         elif evi.State == 3: # 3 = Excluded
                             excluded = excluded + 1
+                        for Entry in BLOCKED:
+                            if ghostevi == Entry:
+                                ghost.label.configure(bg="lightgray")
+                                ghost.label.configure(fg="black")
+                                evi.Exclude()
             if excluded >= 1:
                 ghost.label.configure(bg="red")
                 ghost.label.configure(fg="white")
@@ -263,6 +310,11 @@ class MainLoopGUI():
             else:
                 ghost.label.configure(bg="darkred")
                 ghost.label.configure(fg="white")
+        for evi in self.EVIDENCELIST:
+            if evi.buttonF.cget("bg") == "lightgrey":
+                if not evi.Name in BLOCKED:
+                    evi.buttonF.configure(bg="black")
+                    evi.buttonF.configure(fg="white")
         if requiredevidencecount == 0:
             if requiredsusevidencecount == 0:
                 if bannedevidence == 0:
@@ -298,9 +350,10 @@ photo = ImageTk.PhotoImage(ico)
 window.wm_iconphoto(False, photo)
 WM = True
 if WM == False:
-    window.geometry("630x100")
+    #window.geometry("630x100")
+    pass
 else:
-    window.geometry("630x120")
+    #window.geometry("630x120")
     wm = tk.Label(bg="black",fg="white",text=Num2Str([13, 1, 15, 33, 29, 13, 54, 29, 32, 52, 10, 32, 31, 8, 0, 49, 23, 39, 4, 5, 12, 49, 8, 60, 33, 3, 19, 58, 35, 5, 0, 9, 67, 20, 24, 20, 49, 21, 16, 47, 28, 67, 67, 4, 16, 29, 21, 19, 49, 5, 14, 36, 31, 6, 61, 29, 27, 0, 26, 32, 28, 29, 44, 33, 1, 32, 36, 60, 16, 31, 8, 44, 2]))
     wm.pack(fill=tk.BOTH, expand=True)
 
@@ -321,13 +374,15 @@ if ToolVersion != LatestVersion:
 frameevidences = tk.Frame()
 frameevidences.pack(fill=tk.BOTH, expand=True)
 
+buttonwidth = 11
 evidencelabel = tk.Label(master=frameevidences,text="Green:     Confirmed\nYellow:    Suspected\nRed:           Excluded",width=15,height=2,bg=LabelBGColor,fg=LabelFGColor)
-buttoneviemf = tk.Button(master=frameevidences,command=lambda: ButtonClicked("EMF"),text="EMF",width=11,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-buttoneviorbs = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Orbs"),text="Orbs",width=11,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-buttoneviwriting = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Writing"),text="Writing",width=11,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-buttonevibox = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Box"),text="Spirit Box",width=11,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-buttonevifinger = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Fingerprints"),text="Fingerprints",width=11,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-buttonevifreeze = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Freezing"),text="Freezing",width=11,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttoneviemf = tk.Button(master=frameevidences,command=lambda: ButtonClicked("EMF"),text="EMF",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttoneviorbs = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Orbs"),text="Orbs",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttoneviwriting = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Writing"),text="Writing",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttonevibox = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Box"),text="Spirit Box",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttonevifinger = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Fingerprints"),text="Fingerprints",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttonevifreeze = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Freezing"),text="Freezing",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttonevidots = tk.Button(master=frameevidences,command=lambda: ButtonClicked("D.O.T.S"),text="D.O.T.S",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
 
 Game = MainLoopGUI()
 emf = Evidence(buttoneviemf,"EMF")
@@ -336,41 +391,23 @@ writing = Evidence(buttoneviwriting,"Writing")
 box = Evidence(buttonevibox,"Box")
 finger = Evidence(buttonevifinger,"Fingerprints")
 freeze = Evidence(buttonevifreeze,"Freezing")
+dots = Evidence(buttonevidots,"D.O.T.S")
 Game.EVIDENCELIST.append(emf)
 Game.EVIDENCELIST.append(orbs)
 Game.EVIDENCELIST.append(writing)
 Game.EVIDENCELIST.append(box)
 Game.EVIDENCELIST.append(finger)
 Game.EVIDENCELIST.append(freeze)
+Game.EVIDENCELIST.append(dots)
 
 evidencelabel.pack(fill=tk.BOTH,side=tk.LEFT)
 buttoneviemf.pack(fill=tk.BOTH,side=tk.LEFT)
-buttoneviorbs.pack(fill=tk.BOTH,side=tk.LEFT)
-buttoneviwriting.pack(fill=tk.BOTH,side=tk.LEFT)
 buttonevibox.pack(fill=tk.BOTH,side=tk.LEFT)
 buttonevifinger.pack(fill=tk.BOTH,side=tk.LEFT)
+buttoneviorbs.pack(fill=tk.BOTH,side=tk.LEFT)
+buttoneviwriting.pack(fill=tk.BOTH,side=tk.LEFT)
 buttonevifreeze.pack(fill=tk.BOTH,side=tk.LEFT)
-
-
-
-##framesusevidences = tk.Frame()
-##framesusevidences.pack(fill=tk.BOTH, expand=True)
-##
-##evidencesuslabel = tk.Label(master=framesusevidences,text="Suspected Evidence",width=15,height=2,bg=LabelBGColor,fg=LabelFGColor)
-##buttonsuseviemf = tk.Button(master=framesusevidences,text="EMF",width=10,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-##buttonsuseviorbs = tk.Button(master=framesusevidences,text="Orbs",width=10,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-##buttonsuseviwriting = tk.Button(master=framesusevidences,text="Writing",width=10,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-##buttonsusevibox = tk.Button(master=framesusevidences,text="Spirit Box",width=10,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-##buttonsusevifinger = tk.Button(master=framesusevidences,text="Fingerprints",width=10,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-##buttonsusevifreeze = tk.Button(master=framesusevidences,text="Freezing",width=10,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
-##
-##evidencesuslabel.pack(fill=tk.BOTH,side=tk.LEFT)
-##buttonsuseviemf.pack(fill=tk.BOTH,side=tk.LEFT)
-##buttonsuseviorbs.pack(fill=tk.BOTH,side=tk.LEFT)
-##buttonsuseviwriting.pack(fill=tk.BOTH,side=tk.LEFT)
-##buttonsusevibox.pack(fill=tk.BOTH,side=tk.LEFT)
-##buttonsusevifinger.pack(fill=tk.BOTH,side=tk.LEFT)
-##buttonsusevifreeze.pack(fill=tk.BOTH,side=tk.LEFT)
+buttonevidots.pack(fill=tk.BOTH,side=tk.LEFT)
 
 frameghostsa = tk.Frame()
 frameghostsa.pack(fill=tk.BOTH, expand=True)
@@ -380,33 +417,37 @@ frameghostsb.pack(fill=tk.BOTH, expand=True)
 
 def show_tooltip(text):
     if text == "Banshee":
-        labelban.configure(text="COLD EMF UV")
+        labelban.configure(text="UV ORB DOTS") # ["Fingerprints","Orbs","DOTS"]
     elif text == "Demon":
-        labeldem.configure(text="COLD BOX BOOK")
+        labeldem.configure(text="UV BOOK COLD") # ["Fingerprints","Writing","Freezing"]
     elif text == "Hantu":
-        labelhan.configure(text="ORB BOOK UV")
+        labelhan.configure(text="UV ORB COLD") # ["Fingerprints","Orbs","Freezing"]
     elif text == "Jinn":
-        labeljin.configure(text="EMF ORB BOX")
+        labeljin.configure(text="EMF UV COLD") # ["EMF","Fingerprints","Freezing"]
     elif text == "Mare":
-        labelmar.configure(text="COLD ORB BOX")
+        labelmar.configure(text="BOX ORB BOOK") # ["Box","Orbs","Writing"]
     elif text == "Oni":
-        labeloni.configure(text="EMF BOX BOOK")
+        labeloni.configure(text="EMF COLD DOTS") # ["EMF","Freezing","DOTS"]
     elif text == "Phantom":
-        labelpha.configure(text="COLD EMF ORB")
+        labelpha.configure(text="BOX UV DOTS") # ["Box","Fingerprints","DOTS"]
     elif text == "Poltergeist":
-        labelpol.configure(text="ORB BOX UV")
+        labelpol.configure(text="BOX UV BOOK") # ["Box","Fingerprints","Writing"]
     elif text == "Revenant":
-        labelrev.configure(text="EMF BOOK UV")
+        labelrev.configure(text="ORB BOOK COLD") # ["Orbs","Writing","Freezing"]
     elif text == "Shade":
-        labelsha.configure(text="EMF ORB BOOK")
+        labelsha.configure(text="EMF BOOK COLD") # ["EMF","Writing","Freezing"]
     elif text == "Spirit":
-        labelspi.configure(text="BOX BOOK UV")
+        labelspi.configure(text="EMF BOX BOOK") # ["EMF","Box","Ghost Writing"]
     elif text == "Wraith":
-        labelwra.configure(text="COLD BOX UV")
+        labelwra.configure(text="EMF BOX DOTS") # ["EMF","Box","DOTS"]
     elif text == "Yokai":
-        labelyok.configure(text="ORB BOX BOOK")
+        labelyok.configure(text="BOX ORB DOTS") # ["Box","Orbs","DOTS"]
     elif text == "Yurei":
-        labelyur.configure(text="COLD ORB BOOK")
+        labelyur.configure(text="ORB COLD DOTS") # ["Orbs","Freezing","DOTS"]
+    elif text == "Goryo":
+        labelgor.configure(text="EMF UV DOTS") # ["EMF","Fingerprints","DOTS"]
+    elif text == "Myling":
+        labelmyl.configure(text="EMF UV BOOK") # ["EMF","Fingerprints","Ghost Writing"]
 
 def hide_tooltip(data):
     if data == "Banshee":
@@ -437,6 +478,10 @@ def hide_tooltip(data):
         labelyok.configure(text=data)
     elif data == "Yurei":
         labelyur.configure(text=data)
+    elif data == "Goryo":
+        labelgor.configure(text=data)
+    elif data == "Myling":
+        labelmyl.configure(text=data)
 
 labelban = tk.Label(master=frameghostsa,text="Banshee",width=GhostLabelWidth,height=GhostLabelHeight,bg=LabelGhostPossibleBG,fg=LabelGhostPossibleT)
 labelban.bind("<Enter>", lambda data="Banshee": show_tooltip("Banshee"))
@@ -480,21 +525,29 @@ labelyok.bind("<Leave>", lambda data="Yokai": hide_tooltip("Yokai"))
 labelyur = tk.Label(master=frameghostsb,text="Yurei",width=GhostLabelWidth,height=GhostLabelHeight,bg=LabelGhostPossibleBG,fg=LabelGhostPossibleT)
 labelyur.bind("<Enter>", lambda data="Yurei": show_tooltip("Yurei"))
 labelyur.bind("<Leave>", lambda data="Yurei": hide_tooltip("Yurei"))
+labelgor = tk.Label(master=frameghostsa,text="Goryo",width=GhostLabelWidth,height=GhostLabelHeight,bg=LabelGhostPossibleBG,fg=LabelGhostPossibleT)
+labelgor.bind("<Enter>", lambda data="Goryo": show_tooltip("Goryo"))
+labelgor.bind("<Leave>", lambda data="Goryo": hide_tooltip("Goryo"))
+labelmyl = tk.Label(master=frameghostsb,text="Myling",width=GhostLabelWidth,height=GhostLabelHeight,bg=LabelGhostPossibleBG,fg=LabelGhostPossibleT)
+labelmyl.bind("<Enter>", lambda data="Myling": show_tooltip("Myling"))
+labelmyl.bind("<Leave>", lambda data="Myling": hide_tooltip("Myling"))
 
-ghostsGUI.append(GhostGUI("Banshee",["Freezing","EMF","Fingerprints"],labelban))
-ghostsGUI.append(GhostGUI("Demon",["Freezing","Box","Writing"],labeldem))
-ghostsGUI.append(GhostGUI("Hantu",["Orbs","Writing","Fingerprints"],labelhan))
-ghostsGUI.append(GhostGUI("Jinn",["EMF","Orbs","Box"],labeljin))
-ghostsGUI.append(GhostGUI("Mare",["Freezing","Orbs","Box"],labelmar))
-ghostsGUI.append(GhostGUI("Oni",["EMF","Box","Writing"],labeloni))
-ghostsGUI.append(GhostGUI("Phantom",["Freezing","EMF","Orbs"],labelpha))
-ghostsGUI.append(GhostGUI("Poltergeist",["Orbs","Box","Fingerprints"],labelpol))
-ghostsGUI.append(GhostGUI("Revenant",["EMF","Writing","Fingerprints"],labelrev))
-ghostsGUI.append(GhostGUI("Shade",["EMF","Orbs","Writing"],labelsha))
-ghostsGUI.append(GhostGUI("Spirit",["Box","Writing","Fingerprints"],labelspi))
-ghostsGUI.append(GhostGUI("Wraith",["Freezing","Box","Fingerprints"],labelwra))
-ghostsGUI.append(GhostGUI("Yokai",["Orbs","Box","Writing"],labelyok))
-ghostsGUI.append(GhostGUI("Yurei",["Freezing","Orbs","Writing"],labelyur))
+ghostsGUI.append(GhostGUI("Banshee",["Fingerprints","Orbs","D.O.T.S"],labelban))
+ghostsGUI.append(GhostGUI("Demon",["Fingerprints","Writing","Freezing"],labeldem))
+ghostsGUI.append(GhostGUI("Hantu",["Fingerprints","Orbs","Freezing"],labelhan))
+ghostsGUI.append(GhostGUI("Jinn",["EMF","Fingerprints","Freezing"],labeljin))
+ghostsGUI.append(GhostGUI("Mare",["Box","Orbs","Writing"],labelmar))
+ghostsGUI.append(GhostGUI("Oni",["EMF","Freezing","D.O.T.S"],labeloni))
+ghostsGUI.append(GhostGUI("Phantom",["Box","Fingerprints","D.O.T.S"],labelpha))
+ghostsGUI.append(GhostGUI("Poltergeist",["Box","Fingerprints","Writing"],labelpol))
+ghostsGUI.append(GhostGUI("Revenant",["Orbs","Writing","Freezing"],labelrev))
+ghostsGUI.append(GhostGUI("Shade",["EMF","Writing","Freezing"],labelsha))
+ghostsGUI.append(GhostGUI("Spirit",["EMF","Box","Ghost Writing"],labelspi))
+ghostsGUI.append(GhostGUI("Wraith",["EMF","Box","D.O.T.S"],labelwra))
+ghostsGUI.append(GhostGUI("Yokai",["Box","Orbs","D.O.T.S"],labelyok))
+ghostsGUI.append(GhostGUI("Yurei",["Orbs","Freezing","D.O.T.S"],labelyur))
+ghostsGUI.append(GhostGUI("Goryo",["EMF","Fingerprints","D.O.T.S"],labelgor))
+ghostsGUI.append(GhostGUI("Myling",["EMF","Fingerprints","Writing"],labelmyl))
 
 labelban.pack(fill=tk.BOTH,side=tk.LEFT)
 labeldem.pack(fill=tk.BOTH,side=tk.LEFT)
@@ -510,6 +563,8 @@ labelspi.pack(fill=tk.BOTH,side=tk.LEFT)
 labelwra.pack(fill=tk.BOTH,side=tk.LEFT)
 labelyok.pack(fill=tk.BOTH,side=tk.LEFT)
 labelyur.pack(fill=tk.BOTH,side=tk.LEFT)
+labelgor.pack(fill=tk.BOTH,side=tk.LEFT)
+labelmyl.pack(fill=tk.BOTH,side=tk.LEFT)
 
 nameinput = tk.Entry()
 nameinput.configure(text="Put Ghost Name Here or drag the bottom up to hide name slot.")
