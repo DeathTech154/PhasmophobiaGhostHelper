@@ -27,7 +27,7 @@ from urllib.request import urlopen
 
 ## This list is not exhaustive again all rights reserved.
 
-ToolVersion = "v1.1.1.5"
+ToolVersion = "v1.1.1.6"
 
 def GetLatestVersion():
     url = "https://github.com/DeathTech154/PhasmophobiaGhostHelper/wiki/Version---Changelog"
@@ -542,7 +542,7 @@ ghostsGUI.append(GhostGUI("Phantom",["Box","Fingerprints","D.O.T.S"],labelpha))
 ghostsGUI.append(GhostGUI("Poltergeist",["Box","Fingerprints","Writing"],labelpol))
 ghostsGUI.append(GhostGUI("Revenant",["Orbs","Writing","Freezing"],labelrev))
 ghostsGUI.append(GhostGUI("Shade",["EMF","Writing","Freezing"],labelsha))
-ghostsGUI.append(GhostGUI("Spirit",["EMF","Box","Ghost Writing"],labelspi))
+ghostsGUI.append(GhostGUI("Spirit",["EMF","Box","Writing"],labelspi))
 ghostsGUI.append(GhostGUI("Wraith",["EMF","Box","D.O.T.S"],labelwra))
 ghostsGUI.append(GhostGUI("Yokai",["Box","Orbs","D.O.T.S"],labelyok))
 ghostsGUI.append(GhostGUI("Yurei",["Orbs","Freezing","D.O.T.S"],labelyur))
