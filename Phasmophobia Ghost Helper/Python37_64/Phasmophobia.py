@@ -191,6 +191,10 @@ class Evidence():
         elif self.State == 3: # Exclude this evidence. I suspect it's not true.
             self.buttonF.configure(bg="black")
             self.State = 0
+    def Reset(self):
+        self.buttonF.configure(bg="black")
+        self.buttonF.configure(fg="white")
+        self.State = 0
     def Exclude(self):
         self.buttonF.configure(bg="lightgrey")
         self.buttonF.configure(fg="black")
@@ -327,6 +331,12 @@ def ButtonClicked(data):
             Entry.Toggle()
     Game.ResolveGhosts()
 
+def ButtonRightClicked(data):
+    for Entry in Game.EVIDENCELIST:
+        if Entry.Name == data:
+            Entry.Reset()
+    Game.ResolveGhosts()
+
 LabelBGColor = "black"
 LabelFGColor = "white"
 ButtonBGOff = "black"
@@ -373,16 +383,30 @@ if ToolVersion != LatestVersion:
 
 frameevidences = tk.Frame()
 frameevidences.pack(fill=tk.BOTH, expand=True)
-
 buttonwidth = 11
 evidencelabel = tk.Label(master=frameevidences,text="Green:     Confirmed\nYellow:    Suspected\nRed:           Excluded",width=15,height=2,bg=LabelBGColor,fg=LabelFGColor)
+
 buttoneviemf = tk.Button(master=frameevidences,command=lambda: ButtonClicked("EMF"),text="EMF",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttoneviemf.bind("<Button-2>", lambda data="EMF": ButtonRightClicked("EMF"))
+buttoneviemf.bind("<Button-3>", lambda data="EMF": ButtonRightClicked("EMF"))
 buttoneviorbs = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Orbs"),text="Orbs",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttoneviorbs.bind("<Button-2>", lambda data="Orbs": ButtonRightClicked("Orbs"))
+buttoneviorbs.bind("<Button-3>", lambda data="Orbs": ButtonRightClicked("Orbs"))
 buttoneviwriting = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Writing"),text="Writing",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttoneviwriting.bind("<Button-2>", lambda data="Writing": ButtonRightClicked("Writing"))
+buttoneviwriting.bind("<Button-3>", lambda data="Writing": ButtonRightClicked("Writing"))
 buttonevibox = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Box"),text="Spirit Box",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttonevibox.bind("<Button-2>", lambda data="Box": ButtonRightClicked("Box"))
+buttonevibox.bind("<Button-3>", lambda data="Box": ButtonRightClicked("Box"))
 buttonevifinger = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Fingerprints"),text="Fingerprints",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttonevifinger.bind("<Button-2>", lambda data="Fingerprints": ButtonRightClicked("Fingerprints"))
+buttonevifinger.bind("<Button-3>", lambda data="Fingerprints": ButtonRightClicked("Fingerprints"))
 buttonevifreeze = tk.Button(master=frameevidences,command=lambda: ButtonClicked("Freezing"),text="Freezing",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttonevifreeze.bind("<Button-2>", lambda data="Freezing": ButtonRightClicked("Freezing"))
+buttonevifreeze.bind("<Button-3>", lambda data="Freezing": ButtonRightClicked("Freezing"))
 buttonevidots = tk.Button(master=frameevidences,command=lambda: ButtonClicked("D.O.T.S"),text="D.O.T.S",width=buttonwidth,height=2,bg=ButtonBGOff,fg=ButtonTextColorOff)
+buttonevidots.bind("<Button-2>", lambda data="D.O.T.S": ButtonRightClicked("D.O.T.S"))
+buttonevidots.bind("<Button-3>", lambda data="D.O.T.S": ButtonRightClicked("D.O.T.S"))
 
 Game = MainLoopGUI()
 emf = Evidence(buttoneviemf,"EMF")
